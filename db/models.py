@@ -19,7 +19,6 @@ class Status(str, Enum):
 class Document(Base):
     __tablename__ = "document"
     name: Mapped[str] = mapped_column(String(255), default="")
-    file_path: Mapped[str] = mapped_column(String(255), default="")
     status: Mapped[Status] = mapped_column(SAEnum(Status), default=Status.pending)
 
     document_chunks: Mapped[list["DocumentChunk"]] = relationship(

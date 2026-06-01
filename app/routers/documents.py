@@ -16,7 +16,7 @@ async def upload_text(document_request: DocumentRequest, session=Depends(get_db)
         document=document_request
     )
 
-    chunks = await chunk_text(text=document_request.name)
+    chunks = await chunk_text(text=document_request.content)
 
     document_chunks: list[DocumentChunkRequest] = []
     document_id = uuid.uuid4

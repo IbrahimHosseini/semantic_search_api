@@ -5,8 +5,7 @@ from app.schemas import DocumentRequest, DocumentChunkRequest
 async def create_document(session: AsyncSession, document: DocumentRequest) -> Document | None:
 
     new_document = Document(
-        name = document.name,
-        file_path = document.file_path
+        name = document.name
     )
 
     session.add(new_document)
