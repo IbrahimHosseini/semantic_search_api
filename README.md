@@ -1,5 +1,13 @@
 # Semantic Search API
 
+[![CI](https://github.com/IbrahimHosseini/semantic_search_api/actions/workflows/ci.yml/badge.svg)](https://github.com/IbrahimHosseini/semantic_search_api/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Coverage](https://img.shields.io/badge/coverage-%E2%89%A580%25-brightgreen.svg)](https://github.com/IbrahimHosseini/semantic_search_api)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 FastAPI service for semantic document search using OpenAI embeddings and pgvector cosine similarity.
 
 ## Stack
