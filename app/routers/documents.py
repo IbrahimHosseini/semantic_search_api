@@ -8,7 +8,7 @@ from app.schemas import DocumentChunkRequest, DocumentRequest
 
 router = APIRouter()
 
-@router.post("/documents/", status_code=status.HTTP_201_CREATED)
+@router.post("/documents/", response_model=Document,status_code=status.HTTP_201_CREATED)
 async def upload_text(document_request: DocumentRequest, session=Depends(get_db)):
 
     new_create_document = await document_repository.create_document(
@@ -16,23 +16,24 @@ async def upload_text(document_request: DocumentRequest, session=Depends(get_db)
         document=document_request
     )
 
-    chunks = await chunk_text(text=document_request.content)
+    chunks = chunk_text(text=document_request.content)
 
     document_chunks: list[DocumentChunkRequest] = []
-    document_id = uuid.uuid4
 
-    for chunk in chunks:
+    for index,chunk in enumerate(chunks):
         embedding = await get_embedding(chunk)
 
         new_document_chunk = DocumentChunkRequest(
-            document_id=document_id,
+            document_id=new_create_document.id,
             chunk=chunk,
-            chunk_index=0,
+            chunk_index=index,
             embedding=embedding
         )
         document_chunks.append(new_document_chunk)
 
-    document_repository.create_document_checks(session=session, document_chunks=document_chunks)
+    await document_repository.create_document_checks(session=session, document_chunks=document_chunks)
+
+    return new_create_document
 
 @router.get("/documents/", response_model=list[Document])
 async def get_document():
