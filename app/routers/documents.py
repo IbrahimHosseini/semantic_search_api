@@ -4,11 +4,11 @@ from db.models import Document,  DocumentChunk
 from db.session import get_db
 from services.embedding import get_embedding, chunk_text
 from db.repositories import document_repository
-from app.schemas import DocumentChunkRequest, DocumentRequest
+from app.schemas import DocumentChunkRequest, DocumentRequest, DocumentResponse
 
 router = APIRouter()
 
-@router.post("/documents/", response_model=Document,status_code=status.HTTP_201_CREATED)
+@router.post("/documents/", response_model=DocumentResponse,status_code=status.HTTP_201_CREATED)
 async def upload_text(document_request: DocumentRequest, session=Depends(get_db)):
 
     new_create_document = await document_repository.create_document(

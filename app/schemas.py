@@ -1,6 +1,9 @@
 
+import datetime
 import uuid
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
+from db.models import Status
 
 class DocumentRequest(BaseModel):
     name: str
@@ -11,3 +14,11 @@ class DocumentChunkRequest(BaseModel):
     chunk: str
     chunk_index: int
     embedding: list[float]
+
+class DocumentResponse(BaseModel):
+    id: uuid.UUID
+    name: str
+    status: Status
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
