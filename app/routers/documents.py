@@ -1,14 +1,13 @@
 import uuid
 from fastapi import APIRouter, Depends, status, HTTPException
-from db.models import Document,  DocumentChunk
 from db.session import get_db
 from services.embedding import get_embedding, chunk_text
 from db.repositories import document_repository
-from app.schemas import DocumentChunkRequest, DocumentRequest, DocumentResponse
+from app.schemas import DocumentChunkRequest, DocumentRequest, DocumentResponse, DocumentChunkResponse, SearchRequest
 
-router = APIRouter()
+router = APIRouter(prefix="/documents", tags=["documents"])
 
-@router.post("/documents/", response_model=DocumentResponse,status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=DocumentResponse,status_code=status.HTTP_201_CREATED)
 async def upload_text(document_request: DocumentRequest, session=Depends(get_db)):
 
     new_create_document = await document_repository.create_document(
@@ -35,13 +34,21 @@ async def upload_text(document_request: DocumentRequest, session=Depends(get_db)
 
     return new_create_document
 
-@router.get("/documents/", response_model=list[Document])
-async def get_document():
-    get_embedding()
+@router.get("/", response_model=list[DocumentResponse])
+async def get_document(session = Depends(get_db)):
+    documents = await document_repository.get_documents(session=session)
+    return documents
 
-@router.post("/documents/search", response_model=list[DocumentChunk])
-async def search(query: str):
+@router.post("/search", response_model=list[DocumentChunkResponse])
+async def search(request: SearchRequest, session = Depends(get_db)):
     try:
-        await chunk_text(text=query)
+        embedding_list = await get_embedding(text=request.query)
+
+        document_chunks = await document_repository.search_similar_chunks(
+                session=session,
+                embedding=embedding_list
+            )
+        return document_chunks
+
     except Exception:
         raise HTTPException(status_code=404, detail="Not found")

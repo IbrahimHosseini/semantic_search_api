@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from db.models import Document, DocumentChunk
 from app.schemas import DocumentRequest, DocumentChunkRequest
 
@@ -13,7 +14,6 @@ async def create_document(session: AsyncSession, document: DocumentRequest) -> D
     await session.refresh(new_document)
 
     return new_document
-
 
 async def create_document_checks(session: AsyncSession, document_chunks: list[DocumentChunkRequest]) -> list[DocumentChunk] | None:
 
@@ -35,3 +35,15 @@ async def create_document_checks(session: AsyncSession, document_chunks: list[Do
         await session.refresh(chunk)
 
     return new_document_chunks
+
+async def get_documents(session: AsyncSession) -> list[Document] | None:
+    result = await session.execute(select(Document))
+    return result.scalars().all()
+
+async def search_similar_chunks(session: AsyncSession, embedding: list[float], limit: int = 5) -> list[DocumentChunk] | None:
+    result = await session.execute(
+        select(DocumentChunk)
+        .order_by(DocumentChunk.embedding.cosine_distance(embedding))
+        .limit(limit=limit)
+    )
+    return result.scalars().all()
